@@ -6,6 +6,9 @@ const port = 3000
 const swaggerJsDocs =require('swagger-jsdoc')
 const swaggerUI = require('swagger-ui-express')
 
+const multer = require('multer') // Para imagenes
+const carpeta_archivos = multer({dest:'fotos'})
+
 const mysql = require('mysql2')
 
 const cors = require('cors')
@@ -485,10 +488,23 @@ const swaggerDocs = swaggerJsDocs(swaggerOption)
 app.use('/apis-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs))
 
 
+// Ruta para subir la foto
+app.post('/procesar-foto', carpeta_archivos.single(
+    'file', (req, res) => {
+        if (!req.file) {
+            return res.status(400).send("No fue posible subir la foto")
+        }
+
+        res.send("Foto subida correctamente")
+    })
+);
+
+
+
+
 // Hacer disponible servidor
 app.listen(port,()=>{
     console.log("Servidor iniciado")
 })
-
 
 
